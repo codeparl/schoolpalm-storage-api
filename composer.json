@@ -1,0 +1,97 @@
+{
+    "name": "schoolpalm/storage-api",
+    "description": "A provider-agnostic Laravel storage API for managing storage disks, provider configuration, capabilities, and storage settings.",
+    "type": "library",
+    "version": "1.0.0",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "storage",
+        "storage-api",
+        "filesystem",
+        "disks",
+        "google-drive",
+        "s3",
+        "dropbox",
+        "onedrive",
+        "schoolpalm"
+    ],
+    "authors": [
+        {
+            "name": "Unnovate Brains Co. Ltd",
+            "email": "opensource@unnovatebrains.com",
+            "homepage": "https://unnovatebrains.com",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/UnnovateBrains/storage-api",
+    "support": {
+        "issues": "https://github.com/UnnovateBrains/storage-api/issues",
+        "source": "https://github.com/UnnovateBrains/storage-api"
+    },
+    "require": {
+        "php": "^8.2",
+        "illuminate/contracts": "^11.9.2|^12.0",
+        "illuminate/filesystem": "^11.9.2|^12.0",
+        "illuminate/support": "^11.9.2|^12.0",
+        "masbug/flysystem-google-drive-ext": "^2.5",
+        "spatie/flysystem-dropbox": "^3.1",
+        "justus/flysystem-onedrive": "^2.0.8",
+        "guzzlehttp/guzzle": "^7.15.2"
+    },
+    "require-dev": {
+        "laravel/pint": "^1.13",
+        "orchestra/testbench": "^9.0|^10.0",
+        "phpunit/phpunit": "^11.0",
+        "mockery/mockery": "^1.6",
+        "pestphp/pest": "^3.8",
+        "pestphp/pest-plugin-laravel": "^3.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "SchoolPalm\\StorageApi\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SchoolPalm\\StorageApi\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SchoolPalm\\StorageApi\\StorageApiServiceProvider"
+            ]
+        }
+    },
+    "suggest": {
+        "league/flysystem-aws-s3-v3": "Required to use the built-in S3 and S3-compatible provider.",
+        "schoolpalm/app-settings": "Optional adapter for context-aware SchoolPalm settings."
+    },
+    "scripts": {
+        "test": "@php vendor/bin/phpunit --no-coverage",
+        "lint": "@php vendor/bin/pint --test config src tests",
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ]
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

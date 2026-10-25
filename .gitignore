@@ -1,0 +1,17 @@
+/vendor/
+/.env
+/.env.*
+!/.env.example
+/.phpunit.result.cache
+/.phpunit-watcher.yml
+/build/
+/coverage/
+/workbench/.phpunit.cache/
+/workbench/bootstrap/cache/
+/workbench/storage/
+
+.DS_Store
+Thumbs.db
+
+.idea/
+.vscode/

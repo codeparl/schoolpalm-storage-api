@@ -2,7 +2,7 @@
     "name": "schoolpalm/storage-api",
     "description": "A provider-agnostic Laravel storage API for managing storage disks, provider configuration, capabilities, and storage settings.",
     "type": "library",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "license": "MIT",
     "keywords": [
         "laravel",

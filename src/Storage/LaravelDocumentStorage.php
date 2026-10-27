@@ -23,6 +23,9 @@ use SchoolPalm\StorageApi\Settings\StorageSettings;
 use SplFileInfo;
 use Throwable;
 
+/**
+ * Implements the provider-neutral document API over Laravel filesystem disks.
+ */
 final class LaravelDocumentStorage implements DocumentStorage
 {
     private readonly StorageProviderRegistry $providerRegistry;

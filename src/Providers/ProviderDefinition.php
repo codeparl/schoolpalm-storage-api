@@ -7,6 +7,12 @@ namespace SchoolPalm\StorageApi\Providers;
 use SchoolPalm\StorageApi\Contracts\StorageCapabilities;
 use SchoolPalm\StorageApi\Exceptions\InvalidStorageConfigurationException;
 
+/**
+ * Immutable schema, authorization metadata, and capabilities for one provider.
+ *
+ * A definition describes how a connection may be configured; it is not a
+ * persisted connection or a place to store school credentials.
+ */
 final readonly class ProviderDefinition
 {
     /**

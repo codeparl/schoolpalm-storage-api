@@ -13,6 +13,9 @@ use SchoolPalm\StorageApi\Settings\StorageSettings;
 use SchoolPalm\StorageApi\Storage\DiskBuilder;
 use SchoolPalm\StorageApi\Tests\TestCase;
 
+/**
+ * Verifies disk construction, context isolation, and scoped cache behavior.
+ */
 class DiskBuilderTest extends TestCase
 {
     public function test_disk_cache_is_scoped_by_context_and_rebuilt_when_settings_change(): void
@@ -45,6 +48,37 @@ class DiskBuilderTest extends TestCase
         }
     }
 
+    public function test_invalidation_only_clears_the_requested_context_and_connection(): void
+    {
+        $root = sys_get_temp_dir().DIRECTORY_SEPARATOR.'storage-api-invalidation-'.uniqid('', true);
+        mkdir($root);
+
+        try {
+            $builder = new DiskBuilder(
+                new MutableContextSettingsProvider($root),
+                new StorageProviderRegistry,
+                $this->app->make(Factory::class),
+            );
+            $firstContext = new StorageContext(tenantId: 'tenant-a', schoolId: 'school-a');
+            $secondContext = new StorageContext(tenantId: 'tenant-b', schoolId: 'school-a');
+            $firstDisk = $builder->forContext('tenant-a', 'school-a', 'school-files', $firstContext);
+            $secondDisk = $builder->forContext('tenant-b', 'school-a', 'school-files', $secondContext);
+
+            $builder->invalidate($firstContext, 'school-files');
+
+            $this->assertNotSame(
+                $firstDisk,
+                $builder->forContext('tenant-a', 'school-a', 'school-files', $firstContext),
+            );
+            $this->assertSame(
+                $secondDisk,
+                $builder->forContext('tenant-b', 'school-a', 'school-files', $secondContext),
+            );
+        } finally {
+            @rmdir($root);
+        }
+    }
+
     public function test_missing_s3_adapter_has_an_actionable_error(): void
     {
         if (class_exists(AwsS3V3Adapter::class)) {
@@ -69,6 +103,9 @@ class DiskBuilderTest extends TestCase
     }
 }
 
+/**
+ * Mutable context-aware source used to test scoped disk rebuilding.
+ */
 final class MutableContextSettingsProvider implements ContextualStorageSettingsProvider, StorageSettingsProvider
 {
     public function __construct(public string $root) {}

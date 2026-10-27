@@ -10,6 +10,9 @@ use SchoolPalm\StorageApi\Contracts\DocumentContextResolver;
 use SchoolPalm\StorageApi\Contracts\StorageContextProvider;
 use SchoolPalm\StorageApi\Settings\StorageContext;
 
+/**
+ * Validates storage-relative paths and applies context-specific prefixes.
+ */
 final class DocumentPathResolver
 {
     private ?StorageContext $explicitContext = null;

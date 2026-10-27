@@ -6,6 +6,9 @@ namespace SchoolPalm\StorageApi\Providers;
 
 use SchoolPalm\StorageApi\Contracts\StorageProvider;
 
+/**
+ * Shares schema validation and safe filesystem-config mapping for providers.
+ */
 abstract class AbstractStorageProvider implements StorageProvider
 {
     public function validateConfiguration(array $configuration): void

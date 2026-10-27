@@ -6,6 +6,9 @@ namespace SchoolPalm\StorageApi\Contracts;
 
 use SchoolPalm\StorageApi\Providers\ProviderDefinition;
 
+/**
+ * Trusted provider implementation that validates config and builds disk config.
+ */
 interface StorageProvider
 {
     public function definition(): ProviderDefinition;

@@ -8,6 +8,9 @@ use SchoolPalm\StorageApi\Contracts\StorageOAuthCredentialStore;
 use SchoolPalm\StorageApi\Exceptions\StorageAuthorizationException;
 use SchoolPalm\StorageApi\OAuth\StorageOAuthService;
 
+/**
+ * Resolves, refreshes, and persists OAuth tokens for one scoped connection.
+ */
 final class OAuthTokenState
 {
     private array $configuration;

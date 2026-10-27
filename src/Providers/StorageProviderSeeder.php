@@ -6,6 +6,9 @@ namespace SchoolPalm\StorageApi\Providers;
 
 use SchoolPalm\StorageApi\Contracts\ProviderMetadataRepository;
 
+/**
+ * Publishes registered provider definitions without touching connections.
+ */
 final class StorageProviderSeeder
 {
     public function __construct(private readonly StorageProviderRegistry $registry) {}

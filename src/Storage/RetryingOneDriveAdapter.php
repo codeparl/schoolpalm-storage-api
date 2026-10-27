@@ -10,6 +10,9 @@ use Justus\FlysystemOneDrive\OneDriveAdapter;
 use League\Flysystem\Config;
 use RuntimeException;
 
+/**
+ * Adds bounded retry handling to OneDrive adapter operations.
+ */
 final class RetryingOneDriveAdapter extends OneDriveAdapter
 {
     public function writeStream(string $path, $contents, ?Config $config = null): void

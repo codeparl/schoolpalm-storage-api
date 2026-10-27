@@ -7,6 +7,9 @@ namespace SchoolPalm\StorageApi\Providers\Drivers;
 use SchoolPalm\StorageApi\Providers\AbstractStorageProvider;
 use SchoolPalm\StorageApi\Providers\ProviderDefinition;
 
+/**
+ * Defines configuration and disk mapping for Laravel's local filesystem.
+ */
 final class LocalStorageProvider extends AbstractStorageProvider
 {
     public function definition(): ProviderDefinition

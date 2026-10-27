@@ -6,6 +6,9 @@ namespace SchoolPalm\StorageApi\Settings;
 
 use InvalidArgumentException;
 
+/**
+ * Immutable tenant, school, application, and organization scope for storage.
+ */
 final readonly class StorageContext
 {
     public function __construct(

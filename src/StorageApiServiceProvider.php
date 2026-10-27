@@ -23,6 +23,9 @@ use SchoolPalm\StorageApi\Storage\DiskBuilder;
 use SchoolPalm\StorageApi\Storage\DocumentPathResolver;
 use SchoolPalm\StorageApi\Storage\LaravelDocumentStorage;
 
+/**
+ * Registers storage contracts, provider definitions, OAuth, and Laravel bindings.
+ */
 class StorageApiServiceProvider extends ServiceProvider
 {
     public function register(): void

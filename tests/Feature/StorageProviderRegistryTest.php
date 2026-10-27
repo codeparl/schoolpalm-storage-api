@@ -5,6 +5,7 @@ namespace SchoolPalm\StorageApi\Tests\Feature;
 use SchoolPalm\StorageApi\Contracts\ProviderMetadataRepository;
 use SchoolPalm\StorageApi\Contracts\StorageCapabilities;
 use SchoolPalm\StorageApi\Exceptions\InvalidStorageConfigurationException;
+use SchoolPalm\StorageApi\Facades\StorageApi;
 use SchoolPalm\StorageApi\Providers\AbstractStorageProvider;
 use SchoolPalm\StorageApi\Providers\ConfigurationField;
 use SchoolPalm\StorageApi\Providers\ProviderDefinition;
@@ -12,6 +13,9 @@ use SchoolPalm\StorageApi\Providers\StorageProviderRegistry;
 use SchoolPalm\StorageApi\Providers\StorageProviderSeeder;
 use SchoolPalm\StorageApi\Tests\TestCase;
 
+/**
+ * Covers provider registration, schema publication, and metadata safety.
+ */
 class StorageProviderRegistryTest extends TestCase
 {
     public function test_builtin_provider_schemas_mask_secret_values(): void
@@ -89,6 +93,39 @@ class StorageProviderRegistryTest extends TestCase
         $this->assertSame('new-bucket', $merged['bucket']);
     }
 
+    public function test_configuration_fields_api_exposes_registered_schemas_and_safe_defaults(): void
+    {
+        $registry = $this->app->make(StorageProviderRegistry::class);
+        $registry->register(new SecretDefaultTestStorageProvider);
+
+        $fields = StorageApi::providerConfigurationFields('test-secret-default');
+        $secretField = StorageApi::providerConfigurationField('test-secret-default', 'apiToken');
+        $fieldObjects = StorageApi::providerFieldObjects('test-secret-default');
+        $allFields = StorageApi::allProviderConfigurationFields();
+        $seedSettings = StorageApi::providerSeedSettings();
+        $scopedSettings = StorageApi::providerScopedSettings();
+
+        $this->assertSame('test-secret-default', $registry->definition('test-secret-default')->toArray()['key']);
+        $this->assertSame('apiToken', $fields[0]['name']);
+        $this->assertTrue($secretField['secret']);
+        $this->assertNull($secretField['default']);
+        $this->assertNull($fieldObjects[0]->default);
+        $this->assertArrayHasKey('test-secret-default', $allFields);
+        $this->assertArrayHasKey('gdrive', $allFields);
+        $this->assertArrayHasKey('dropbox', $allFields);
+        $this->assertArrayHasKey('onedrive', $allFields);
+        $this->assertNull($seedSettings['test-secret-default.apiToken']);
+        $this->assertNull($scopedSettings['secrets']['test-secret-default']['apiToken']);
+        $this->assertNull(StorageApi::providerConfigurationField('test-secret-default', 'not-defined'));
+        $this->assertStringNotContainsString('private-test-default', json_encode([
+            $fields,
+            $fieldObjects,
+            $allFields,
+            $seedSettings,
+            $scopedSettings,
+        ], JSON_THROW_ON_ERROR));
+    }
+
     public function test_provider_metadata_seeding_is_repeatable_and_does_not_touch_connections(): void
     {
         $repository = new InMemoryProviderMetadataRepository;
@@ -104,6 +141,26 @@ class StorageProviderRegistryTest extends TestCase
     }
 }
 
+/**
+ * Test provider with a deliberately sensitive schema default.
+ */
+final class SecretDefaultTestStorageProvider extends AbstractStorageProvider
+{
+    public function definition(): ProviderDefinition
+    {
+        return new ProviderDefinition(
+            'test-secret-default',
+            'Test secret default',
+            'test-secret-default',
+            [ConfigurationField::string('apiToken')->default('private-test-default')->secret(true)],
+            StorageCapabilities::generic('test-secret-default'),
+        );
+    }
+}
+
+/**
+ * Minimal trusted extension used to verify custom provider registration.
+ */
 final class TestStorageProvider extends AbstractStorageProvider
 {
     public function definition(): ProviderDefinition
@@ -118,6 +175,9 @@ final class TestStorageProvider extends AbstractStorageProvider
     }
 }
 
+/**
+ * In-memory metadata repository that records only provider definitions.
+ */
 final class InMemoryProviderMetadataRepository implements ProviderMetadataRepository
 {
     public array $definitions = [];

@@ -18,6 +18,9 @@ use SchoolPalm\StorageApi\Providers\StorageProviderRegistry;
 use SchoolPalm\StorageApi\Settings\StorageContext;
 use SchoolPalm\StorageApi\Settings\StorageSettings;
 
+/**
+ * Resolves scoped settings into cached Laravel filesystem adapters.
+ */
 final class DiskBuilder
 {
     /** @var array<string, array{signature: string, disk: FilesystemAdapter, context: string, connection: string}> */

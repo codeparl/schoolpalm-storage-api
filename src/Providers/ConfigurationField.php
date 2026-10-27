@@ -4,6 +4,12 @@ declare(strict_types=1);
 
 namespace SchoolPalm\StorageApi\Providers;
 
+/**
+ * Immutable configuration-field schema used for validation and UI metadata.
+ *
+ * Secret values are omitted from array metadata even when a definition has a
+ * secret default for trusted internal configuration.
+ */
 final readonly class ConfigurationField
 {
     private const UNSET = "\0__storage_field_unset__\0";
@@ -144,6 +150,25 @@ final readonly class ConfigurationField
             'options' => $this->options,
             'rules' => $this->rules,
         ];
+    }
+
+    /**
+     * Copy this schema field for metadata consumers without secret defaults.
+     */
+    public function metadataCopy(): self
+    {
+        return new self(
+            name: $this->name,
+            label: $this->label,
+            type: $this->type,
+            required: $this->required,
+            placeholder: $this->placeholder,
+            description: $this->description,
+            default: $this->secret ? null : $this->default,
+            options: $this->options,
+            secret: $this->secret,
+            rules: $this->rules,
+        );
     }
 
     private function with(array $changes): self

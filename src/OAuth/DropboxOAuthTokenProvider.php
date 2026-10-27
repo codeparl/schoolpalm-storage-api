@@ -8,6 +8,9 @@ use GuzzleHttp\Exception\ClientException;
 use SchoolPalm\StorageApi\Settings\OAuthTokenState;
 use Spatie\Dropbox\RefreshableTokenProvider;
 
+/**
+ * Supplies Dropbox adapter tokens and refreshes expired authorization.
+ */
 final class DropboxOAuthTokenProvider implements RefreshableTokenProvider
 {
     public function __construct(private readonly OAuthTokenState $state) {}

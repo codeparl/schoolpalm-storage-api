@@ -6,6 +6,9 @@ namespace SchoolPalm\StorageApi\Contracts;
 
 use SchoolPalm\StorageApi\Settings\StorageContext;
 
+/**
+ * Persists refreshed OAuth credentials through the host's secure settings store.
+ */
 interface StorageOAuthCredentialStore
 {
     /**

@@ -9,6 +9,9 @@ use InvalidArgumentException;
 use RuntimeException;
 use SchoolPalm\StorageApi\Contracts\StorageWorkspaceInterface;
 
+/**
+ * Stores document-generation batch artifacts in an isolated workspace.
+ */
 final class LocalStorageWorkspace implements StorageWorkspaceInterface
 {
     public function __construct(

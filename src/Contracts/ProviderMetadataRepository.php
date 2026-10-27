@@ -6,6 +6,9 @@ namespace SchoolPalm\StorageApi\Contracts;
 
 use SchoolPalm\StorageApi\Providers\ProviderDefinition;
 
+/**
+ * Host-owned persistence boundary for provider schemas only, never connections.
+ */
 interface ProviderMetadataRepository
 {
     /**

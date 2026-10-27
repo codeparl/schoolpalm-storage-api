@@ -8,6 +8,11 @@ use Closure;
 use SchoolPalm\StorageApi\Contracts\ContextualStorageSettingsProvider;
 use SchoolPalm\StorageApi\Contracts\StorageSettingsRepository;
 
+/**
+ * Reads connections from the host App Settings manager without owning writes.
+ *
+ * The host remains responsible for encryption, authorization, and persistence.
+ */
 final class AppSettingsStorageSettingsProvider implements ContextualStorageSettingsProvider, StorageSettingsRepository
 {
     private readonly ?Closure $scopeResolver;

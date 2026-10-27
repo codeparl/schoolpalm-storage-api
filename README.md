@@ -152,6 +152,7 @@ composer require schoolpalm/storage-api
 - [SchoolPalm and package integration](docs/schoolpalm-integration.md)
 - [Provider development](docs/provider-development.md)
 - [Settings integration and metadata seeding](docs/settings-integration.md)
+- [Provider configuration fields API](docs/provider-configuration-fields.md)
 - [Context integration](docs/context-integration.md)
 - [Provider configuration](docs/providers.md)
 - [Security](docs/security.md)

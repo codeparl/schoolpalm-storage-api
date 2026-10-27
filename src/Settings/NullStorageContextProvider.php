@@ -6,6 +6,9 @@ namespace SchoolPalm\StorageApi\Settings;
 
 use SchoolPalm\StorageApi\Contracts\StorageContextProvider;
 
+/**
+ * Returns no context for standalone applications without a host resolver.
+ */
 final class NullStorageContextProvider implements StorageContextProvider
 {
     public function current(): ?StorageContext

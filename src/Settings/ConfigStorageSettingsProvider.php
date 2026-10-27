@@ -8,6 +8,9 @@ use SchoolPalm\StorageApi\Contracts\ContextualStorageSettingsProvider;
 use SchoolPalm\StorageApi\Contracts\StorageSettingsRepository;
 use SchoolPalm\StorageApi\Exceptions\InvalidStorageConfigurationException;
 
+/**
+ * Resolves package config and existing Laravel filesystem disks.
+ */
 final class ConfigStorageSettingsProvider implements ContextualStorageSettingsProvider, StorageSettingsRepository
 {
     public function settingsFor(?string $tenantId, ?string $schoolId): ?StorageSettings

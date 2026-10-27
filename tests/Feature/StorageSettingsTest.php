@@ -11,6 +11,9 @@ use SchoolPalm\StorageApi\Settings\StorageContext;
 use SchoolPalm\StorageApi\Settings\StorageSettings;
 use SchoolPalm\StorageApi\Tests\TestCase;
 
+/**
+ * Verifies scoped settings resolution and safe storage configuration behavior.
+ */
 class StorageSettingsTest extends TestCase
 {
     public function test_config_provider_uses_application_default_and_named_connections(): void
@@ -59,6 +62,27 @@ class StorageSettingsTest extends TestCase
         $this->assertSame('school-files', $first->diskName);
         $this->assertSame('other-school-files', $second->diskName);
         $this->assertSame('app-settings', $first->source);
+    }
+
+    public function test_app_settings_missing_named_connection_does_not_use_school_default(): void
+    {
+        $manager = new FakeSettingsManager([
+            'tenant:tenant-a:storage_api.schools.school-a' => [
+                'default_connection' => 'school-files',
+                'connections' => [
+                    'school-files' => [
+                        'provider' => 'local',
+                        'config' => ['root' => sys_get_temp_dir()],
+                    ],
+                ],
+            ],
+        ]);
+        $provider = new AppSettingsStorageSettingsProvider($manager, new ConfigStorageSettingsProvider);
+
+        $this->assertNull($provider->connection(
+            'missing-connection',
+            new StorageContext(tenantId: 'tenant-a', schoolId: 'school-a'),
+        ));
     }
 
     public function test_private_s3_connections_do_not_expose_public_urls(): void
@@ -139,6 +163,9 @@ class StorageSettingsTest extends TestCase
     }
 }
 
+/**
+ * Mimics immutable App Settings context/group builders for scope tests.
+ */
 final class FakeSettingsManager
 {
     private ?string $contextType = null;

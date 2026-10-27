@@ -44,29 +44,54 @@ Provider definitions in the registry describe the configuration form, authorizat
 
 `AppSettingsStorageSettingsProvider` is an optional bridge to the runtime `app-settings.manager` binding. The package does not require `schoolpalm/app-settings` or its database schema. The host can instead implement `StorageSettingsProvider` or `StorageSettingsRepository` against any existing settings repository.
 
-The adapter expects an appropriate `storage_api` settings group (or a custom scope resolver). A typical group contains a default connection name and named connections:
+The adapter reads actual named connections from the `connections` map. SchoolPalm may also store a `providers` map containing null-valued configuration templates for its settings UI. These templates are generated from the registered provider definitions, are not connections, and are not used to build filesystems. New schools can keep `school-disk` as their default while an administrator later creates a named connection that selects a configured provider:
 
 ```php
 [
-    'default_connection' => 'school-documents',
+    'default_connection' => 'school-disk',
+    'purpose_connections' => [
+        'school-documents' => 'school-disk',
+        'school-uploads' => 'school-disk',
+        'school-exports' => 'school-disk',
+        'school-backup' => 'google-archive',
+        'school-archive' => 'school-disk',
+        'school-temporary' => 'school-disk',
+        'school-media' => 'school-disk',
+    ],
+    'providers' => [
+        'gdrive' => [
+            'config' => [
+                'clientId' => null,
+                'clientSecret' => null,
+                'refreshToken' => null,
+                'accessToken' => null,
+                'accessTokenExpiresAt' => null,
+                'folderId' => null,
+                'teamDriveId' => null,
+            ],
+        ],
+        // Other registered providers are generated the same way.
+    ],
     'connections' => [
-        'school-documents' => [
+        'school-disk' => [
+            'provider' => 'local',
+            'enabled' => true,
+            'config' => [],
+        ],
+        'google-archive' => [
             'provider' => 'gdrive',
             'enabled' => true,
-            'config' => [
-                'clientId' => 'oauth-client-id',
-                'clientSecret' => 'encrypted-client-secret',
-                'accessToken' => 'encrypted-access-token',
-                'refreshToken' => 'encrypted-refresh-token',
-                'accessTokenExpiresAt' => '2026-10-25T10:00:00+00:00',
-                'folderId' => 'authorized-folder-id',
-            ],
+            'config' => [/* Separate encrypted connection configuration. */],
         ],
     ],
 ]
 ```
 
-That example illustrates the configuration shape; it is not an instruction to store plaintext secrets. The host must encrypt/decrypt secrets using its existing secure settings facility. See [settings integration](settings-integration.md) for adapter binding, context lookup, and metadata seeding.
+The `purpose_connections` map selects which named connection each bridge API uses. For example, setting `school-backup` to `google-archive` routes `putBackup()` to that Google Drive connection, while `school-uploads` can remain on `school-disk` and retain SchoolPalm quota enforcement. Each purpose defaults to `school-disk`. A remote destination must first exist as an enabled named entry in `connections`.
+
+The `providers` map is initialized from `StorageApi::allProviderConfigurationFields()` with missing field values set to `null`. Existing values are preserved. A real provider connection stores its selected provider and configuration under `connections.{connectionName}`; only that connection is consumed by the storage API. Null templates are never treated as authorization or configuration.
+
+The example illustrates the configuration shape; it is not an instruction to store plaintext secrets. The host must encrypt/decrypt secrets using its existing secure settings facility. See [settings integration](settings-integration.md) for adapter binding, context lookup, and metadata seeding.
 
 ### SchoolPalm tenant and school context
 
@@ -206,19 +231,14 @@ Use a path generated from authorized domain identifiers and validated names. The
 
 ## Provider selection and purpose policy
 
-One school may have multiple named connections. For example, the host may store `school-documents` and `school-exports` as separate connections, then select one according to a domain policy:
+One school may have multiple named connections. The Module Bridge's `StorageConnectionResolver` reads `purpose_connections` from the school settings and routes purpose APIs accordingly. For example, it can route backups to Google Drive while uploads remain on quota-managed School Disk:
 
 ```php
-$connection = $document->containsSensitiveData()
-    ? 'school-documents'
-    : 'school-exports';
-
-$storage = app(DocumentStorage::class)
-    ->forStorageContext($schoolContext)
-    ->forConnection($connection);
+StorageHost::putBackup('daily/archive.zip', $backupBytes); // google-archive
+StorageHost::putUpload('student/photo.jpg', $uploadBytes); // school-disk
 ```
 
-This is only an illustration. The host must define and authorize the selection rule; the storage API does not infer a purpose or choose between providers.
+The host still owns the settings UI and authorization policy for changing these assignments. The package does not choose providers from file contents or infer a purpose.
 
 ## Provider metadata seeding
 

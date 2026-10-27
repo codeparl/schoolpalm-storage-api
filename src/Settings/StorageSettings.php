@@ -7,6 +7,11 @@ namespace SchoolPalm\StorageApi\Settings;
 use InvalidArgumentException;
 use JsonSerializable;
 
+/**
+ * Resolved runtime settings for one named storage connection.
+ *
+ * JSON serialization masks credential-like values and is safe for diagnostics.
+ */
 class StorageSettings implements JsonSerializable
 {
     public function __construct(

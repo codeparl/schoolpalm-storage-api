@@ -7,6 +7,9 @@ namespace SchoolPalm\StorageApi\OAuth;
 use Microsoft\Graph\Graph;
 use SchoolPalm\StorageApi\Settings\OAuthTokenState;
 
+/**
+ * Refreshes OneDrive authorization before creating Microsoft Graph requests.
+ */
 final class RefreshingMicrosoftGraph extends Graph
 {
     public function __construct(private readonly OAuthTokenState $state)

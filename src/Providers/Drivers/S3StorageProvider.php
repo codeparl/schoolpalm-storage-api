@@ -7,6 +7,9 @@ namespace SchoolPalm\StorageApi\Providers\Drivers;
 use SchoolPalm\StorageApi\Providers\AbstractStorageProvider;
 use SchoolPalm\StorageApi\Providers\ProviderDefinition;
 
+/**
+ * Defines configuration and disk mapping for S3-compatible storage.
+ */
 final class S3StorageProvider extends AbstractStorageProvider
 {
     public function definition(): ProviderDefinition

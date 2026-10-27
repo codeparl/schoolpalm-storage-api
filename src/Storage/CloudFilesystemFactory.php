@@ -20,6 +20,9 @@ use SchoolPalm\StorageApi\Settings\StorageContext;
 use Spatie\Dropbox\Client as DropboxClient;
 use Spatie\FlysystemDropbox\DropboxAdapter;
 
+/**
+ * Constructs the package-managed Google Drive, Dropbox, and OneDrive adapters.
+ */
 final class CloudFilesystemFactory
 {
     public function __construct(

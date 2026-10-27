@@ -13,6 +13,12 @@ use SchoolPalm\StorageApi\Providers\Drivers\LocalStorageProvider;
 use SchoolPalm\StorageApi\Providers\Drivers\OneDriveStorageProvider;
 use SchoolPalm\StorageApi\Providers\Drivers\S3StorageProvider;
 
+/**
+ * Owns the trusted provider implementations and their stable definitions.
+ *
+ * School settings select a registered ID; they cannot register executable
+ * classes or drivers dynamically.
+ */
 final class StorageProviderRegistry
 {
     /** @var array<string, StorageProvider> */

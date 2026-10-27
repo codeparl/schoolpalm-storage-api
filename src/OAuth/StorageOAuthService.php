@@ -8,6 +8,11 @@ use GuzzleHttp\ClientInterface;
 use SchoolPalm\StorageApi\Exceptions\StorageAuthorizationException;
 use Throwable;
 
+/**
+ * Builds OAuth URLs and exchanges or refreshes provider access tokens.
+ *
+ * Callback security and durable credential storage remain host responsibilities.
+ */
 final class StorageOAuthService
 {
     private const SCOPES = [
